@@ -1,0 +1,48 @@
+{
+  "name": "nestjs-stellate",
+  "version": "1.0.0",
+  "description": "Stellate.co Module for Nest Framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volbrene/nestjs-stellate.git"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "start": "ts-node -r tsconfig-paths/register example/src/main.ts"
+  },
+  "keywords": [
+    "nestjs",
+    "stellate",
+    "graphql",
+    "cdn"
+  ],
+  "author": "volbrene",
+  "license": "ISC",
+  "devDependencies": {
+    "@apollo/server": "^4.7.0",
+    "@apollo/subgraph": "^2.4.2",
+    "@nestjs/apollo": "^11.0.5",
+    "@nestjs/common": "^9.4.0",
+    "@nestjs/config": "^2.3.1",
+    "@nestjs/core": "^9.4.0",
+    "@nestjs/graphql": "^11.0.5",
+    "@nestjs/platform-express": "^9.4.0",
+    "dotenv": "^16.0.3",
+    "graphql": "^16.6.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "axios": "^1.4.0"
+  }
+}
