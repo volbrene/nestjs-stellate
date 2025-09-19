@@ -18,6 +18,7 @@
     "test": "npm run test:e2e",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
     "start": "ts-node -r tsconfig-paths/register example/src/main.ts",
+    "lint:prettier": "prettier --check .",
     "prepare": "volbrene-git-hooks"
   },
   "keywords": [
