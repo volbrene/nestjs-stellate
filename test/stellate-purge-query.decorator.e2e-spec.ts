@@ -1,13 +1,13 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule, Query, Resolver } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as request from 'supertest';
 import axios from 'axios';
 import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 
 import { StellatePurgeInterceptor } from '../src/stellate-purge.interceptor';
-import { GqlResolver } from './fixtures/gql.resolver';
+import { StellatePurgeQuery } from '../src/decorators/stellate-purge-query.decorator';
 
 jest.mock('axios');
 const axiosPost = axios.post as jest.Mock;
@@ -16,7 +16,17 @@ const axiosPost = axios.post as jest.Mock;
 jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
 jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
 
-describe('GqlResolver + StellatePurgeInterceptor (GraphQL module)', () => {
+// Create Test Resolver
+@Resolver()
+export class StellatePurgeQueryResolver {
+  @Query(() => String)
+  @StellatePurgeQuery(['allPosts'])
+  async getHello(): Promise<string> {
+    return 'Hello';
+  }
+}
+
+describe('StellatePurgeQuery (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -28,8 +38,7 @@ describe('GqlResolver + StellatePurgeInterceptor (GraphQL module)', () => {
         }),
       ],
       providers: [
-        GqlResolver,
-        // Register interceptor the "Nest way"
+        StellatePurgeQueryResolver,
         {
           provide: APP_INTERCEPTOR,
           useValue: new StellatePurgeInterceptor(
@@ -61,7 +70,7 @@ describe('GqlResolver + StellatePurgeInterceptor (GraphQL module)', () => {
     expect(url).toContain('my-stellate-service');
     expect(config.headers['stellate-token']).toBe('secret');
     expect(body.query).toContain('_purgeQuery');
-    expect(body.query).toContain('allPosts'); // came from @StellatePurgeQuery(['allPosts'])
+    expect(body.query).toContain('allPosts');
   });
 
   it('still returns data if Stellate responds with errors', async () => {
