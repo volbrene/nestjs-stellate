@@ -1,19 +1,13 @@
-<p align="center">
-  <a href="https://nestjs.com/" target="blank"><img src="https://kamilmysliwiec.com/public/nest-logo.png#1"  height="150" alt="Nest Logo" />   </a>
-  <a href="https://stellate.co" target="_blank"><img src="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/soeczselxya3vtswcxv5" height="150"></a>
-</p>
+# 🛰️ NestJS Stellate Module
 
-<p align="center">Stellate Module for Nest framework</p>
+[![npm version](https://img.shields.io/npm/v/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
+[![CI](https://github.com/volbrene/githooks/actions/workflows/release.yml/badge.svg)](https://github.com/volbrene/githooks/actions)
+[![npm downloads](https://img.shields.io/npm/dm/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
+[![license](https://img.shields.io/npm/l/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
 
-<p align="center">
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/v/nestjs-stellate.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/l/nestjs-stellate.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/dm/nestjs-stellate.svg" alt="NPM Downloads" /></a>
-</p>
+> This lightweight module for [NestJS](https://nestjs.com/) handles cache purge operations via the [Stellate API](https://stellate.io/) and lets you trigger query and type purges using simple decorators.
 
-## Description
-
-This's a module for [Nest](https://github.com/nestjs/nest) to handle the purge api from [Stellate](https://stellate.io/).
+---
 
 ## Installation
 
