@@ -1,15 +1,9 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  Logger,
-  NestInterceptor,
-} from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import axios from "axios";
-import { Observable } from "rxjs";
-import { tap } from "rxjs/operators";
-import { IStellatePurgeInterceptorOptions } from "./stellate-purge.interface";
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import axios from 'axios';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { IStellatePurgeInterceptorOptions } from './stellate-purge.interface';
 
 @Injectable()
 export class StellatePurgeInterceptor implements NestInterceptor {
@@ -24,25 +18,21 @@ export class StellatePurgeInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(async (data) => {
         const stellateQueries = this.reflector.get<string[]>(
-          "stellate-purge-queries",
+          'stellate-purge-queries',
           context.getHandler()
         );
 
         const stellateType = this.reflector.get<{
           type: string;
           idReference: string | number;
-        }>("stellate-purge-type", context.getHandler());
+        }>('stellate-purge-type', context.getHandler());
 
         if (stellateQueries) {
           await this.purgeQueries(stellateQueries);
         }
 
         if (stellateType?.type) {
-          await this.purgeType(
-            stellateType?.type,
-            stellateType?.idReference,
-            data
-          );
+          await this.purgeType(stellateType?.type, stellateType?.idReference, data);
         }
 
         return data;
@@ -55,14 +45,12 @@ export class StellatePurgeInterceptor implements NestInterceptor {
    */
   async purgeQueries(queries: string[]): Promise<Boolean> {
     return new Promise(async (resolve) => {
-      const query = `mutation { _purgeQuery(queries: [${queries.join(",")}]) }`;
+      const query = `mutation { _purgeQuery(queries: [${queries.join(',')}]) }`;
 
       const successfull = await this.sendPurgeRequest(query);
 
       if (successfull)
-        this.logger.log(
-          `Cache was successfully cleared for the queries: ${queries.join(",")}`
-        );
+        this.logger.log(`Cache was successfully cleared for the queries: ${queries.join(',')}`);
 
       resolve(true);
     });
@@ -71,11 +59,7 @@ export class StellatePurgeInterceptor implements NestInterceptor {
   /**
    * purge type
    */
-  async purgeType(
-    type: string,
-    idReference: string | number,
-    data: any
-  ): Promise<Boolean> {
+  async purgeType(type: string, idReference: string | number, data: any): Promise<Boolean> {
     return new Promise(async (resolve) => {
       if (idReference && !data[idReference]) {
         this.logger.error(
@@ -91,7 +75,7 @@ export class StellatePurgeInterceptor implements NestInterceptor {
         type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
       }`;
       const query = `mutation {
-          ${purgeMutationName}${id ? `(id: ["${id.toString()}"])` : ""}
+          ${purgeMutationName}${id ? `(id: ["${id.toString()}"])` : ''}
         }`;
 
       const successfull = await this.sendPurgeRequest(query);
@@ -99,7 +83,7 @@ export class StellatePurgeInterceptor implements NestInterceptor {
       if (successfull)
         this.logger.log(
           `Cache was successfully cleared for the type: ${type.toString()}${
-            id ? ` | ID: ${id.toString()}` : ""
+            id ? ` | ID: ${id.toString()}` : ''
           }`
         );
 
@@ -129,16 +113,14 @@ export class StellatePurgeInterceptor implements NestInterceptor {
           },
           {
             headers: {
-              "Content-Type": "application/json",
-              "stellate-token": this.options.purgeToken,
+              'Content-Type': 'application/json',
+              'stellate-token': this.options.purgeToken,
             },
           }
         );
 
         if (data?.errors) {
-          this.logger.error(
-            `Stellate Purge Api Error: ${JSON.stringify(data.errors)}`
-          );
+          this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(data.errors)}`);
 
           resolve(false);
           return;

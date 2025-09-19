@@ -47,16 +47,16 @@ this.
 > app.module.ts
 
 ```ts
-import { APP_INTERCEPTOR } from "@nestjs/core";
-import { StellatePurgeInterceptor } from "nestjs-stellate";
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { StellatePurgeInterceptor } from 'nestjs-stellate';
 
 @Module({
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useValue: new StellatePurgeInterceptor({
-        serviceName: "<service-name>",
-        purgeToken: "<token>",
+        serviceName: '<service-name>',
+        purgeToken: '<token>',
       }),
     },
   ],

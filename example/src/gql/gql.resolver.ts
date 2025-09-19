@@ -1,11 +1,11 @@
-import { Query, Resolver } from "@nestjs/graphql";
-import { StellatePurgeQuery } from "../../../lib";
+import { Query, Resolver } from '@nestjs/graphql';
+import { StellatePurgeQuery } from '../../../src';
 
-@Resolver("Gql")
+@Resolver('Gql')
 export class GqlResolver {
   @Query(() => String)
-  @StellatePurgeQuery(["allPosts"])
+  @StellatePurgeQuery(['allPosts'])
   async getHello() {
-    return "Hello";
+    return 'Hello';
   }
 }
