@@ -41,97 +41,84 @@ export class StellatePurgeInterceptor implements NestInterceptor {
   }
 
   /**
-   * purge queries
+   * Purge a list of queries from Stellate cache
    */
-  async purgeQueries(queries: string[]): Promise<Boolean> {
-    return new Promise(async (resolve) => {
-      const query = `mutation { _purgeQuery(queries: [${queries.join(',')}]) }`;
+  async purgeQueries(queries: string[]): Promise<boolean> {
+    const query = `mutation { _purgeQuery(queries: [${queries.join(',')}]) }`;
 
-      const successfull = await this.sendPurgeRequest(query);
+    const successful = await this.sendPurgeRequest(query);
 
-      if (successfull)
-        this.logger.log(`Cache was successfully cleared for the queries: ${queries.join(',')}`);
+    if (successful) {
+      this.logger.log(`Cache was successfully cleared for the queries: ${queries.join(',')}`);
+    }
 
-      resolve(true);
-    });
+    return true;
   }
 
   /**
-   * purge type
+   * Purge a single type (optionally by ID) from Stellate cache
    */
-  async purgeType(type: string, idReference: string | number, data: any): Promise<Boolean> {
-    return new Promise(async (resolve) => {
-      if (idReference && !data[idReference]) {
-        this.logger.error(
-          `Stellate Purge Error: Id reference "${idReference}" not found in response object!`
-        );
+  async purgeType(
+    type: string,
+    idReference: string | number | undefined,
+    data: Record<string, any>
+  ): Promise<boolean> {
+    // if an idReference is configured but not present in response data → abort
+    if (idReference && !data[idReference]) {
+      this.logger.error(
+        `Stellate Purge Error: Id reference "${idReference}" not found in response object!`
+      );
+      return false;
+    }
 
-        resolve(false);
-        return;
-      }
+    const id = idReference ? data[idReference] : undefined;
+    const purgeMutationName = `purge${type.charAt(0).toUpperCase()}${type.slice(1)}`;
 
-      const id = idReference && data[idReference];
-      const purgeMutationName = `purge${
-        type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
-      }`;
-      const query = `mutation {
-          ${purgeMutationName}${id ? `(id: ["${id.toString()}"])` : ''}
-        }`;
+    const query = `mutation {
+    ${purgeMutationName}${id ? `(id: ["${id}"])` : ''}
+  }`;
 
-      const successfull = await this.sendPurgeRequest(query);
+    const successful = await this.sendPurgeRequest(query);
 
-      if (successfull)
-        this.logger.log(
-          `Cache was successfully cleared for the type: ${type.toString()}${
-            id ? ` | ID: ${id.toString()}` : ''
-          }`
-        );
+    if (successful) {
+      this.logger.log(
+        `Cache was successfully cleared for the type: ${type}${id ? ` | ID: ${id}` : ''}`
+      );
+    }
 
-      resolve(true);
-    });
+    return true;
   }
 
   /**
-   *
-   * @param query
-   * @returns
+   * Send the purge mutation to Stellate Admin API
    */
-  private async sendPurgeRequest(query: string) {
-    return new Promise(async (resolve) => {
-      if (!this.options.serviceName || !this.options.purgeToken) {
-        this.logger.error(`Stellate missing serviceName and purgeToken`);
+  private async sendPurgeRequest(query: string): Promise<boolean> {
+    if (!this.options.serviceName || !this.options.purgeToken) {
+      this.logger.error('Stellate missing serviceName and purgeToken');
+      return false;
+    }
 
-        resolve(false);
-        return;
-      }
-
-      try {
-        const { data } = await axios.post(
-          `https://admin.stellate.io/${this.options.serviceName}`,
-          {
-            query,
+    try {
+      const { data } = await axios.post(
+        `https://admin.stellate.io/${this.options.serviceName}`,
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'stellate-token': this.options.purgeToken,
           },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'stellate-token': this.options.purgeToken,
-            },
-          }
-        );
-
-        if (data?.errors) {
-          this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(data.errors)}`);
-
-          resolve(false);
-          return;
         }
+      );
 
-        resolve(true);
-      } catch (e) {
-        this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(e)}`);
-
-        resolve(false);
+      if (data?.errors) {
+        this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(data.errors)}`);
+        return false;
       }
-    });
+
+      return true;
+    } catch (err) {
+      this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(err)}`);
+      return false;
+    }
   }
 }
