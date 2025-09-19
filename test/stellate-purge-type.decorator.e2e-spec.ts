@@ -5,7 +5,7 @@ import { GraphQLModule, Query, Resolver, Args, ObjectType, Field } from '@nestjs
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as request from 'supertest';
 import axios from 'axios';
-import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { StellatePurgeInterceptor } from '../src/stellate-purge.interceptor';
 import { StellatePurgeType } from '../src/decorators/stellate-purge-type.decorator';
@@ -70,10 +70,10 @@ describe('StellatePurgeType (e2e, object payloads)', () => {
         StellatePurgeTypeResolver,
         {
           provide: APP_INTERCEPTOR,
-          useValue: new StellatePurgeInterceptor(
-            { serviceName: 'my-stellate-service', purgeToken: 'secret' },
-            new Reflector()
-          ),
+          useValue: new StellatePurgeInterceptor({
+            serviceName: 'my-stellate-service',
+            purgeToken: 'secret',
+          }),
         },
       ],
     }).compile();
