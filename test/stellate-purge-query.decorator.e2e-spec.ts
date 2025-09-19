@@ -16,7 +16,7 @@ const axiosPost = axios.post as jest.Mock;
 jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
 jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
 
-// Create Test Resolver
+// --- Test Resolver(s)
 @Resolver()
 export class StellatePurgeQueryResolver {
   @Query(() => String)
