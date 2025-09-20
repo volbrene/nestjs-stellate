@@ -33,15 +33,14 @@
     "access": "public"
   },
   "devDependencies": {
-    "@apollo/server": "^4.7.0",
-    "@apollo/subgraph": "^2.4.2",
-    "@nestjs/apollo": "^11.0.5",
-    "@nestjs/common": "^9.4.0",
-    "@nestjs/config": "^2.3.1",
-    "@nestjs/core": "^9.4.0",
-    "@nestjs/graphql": "^11.0.5",
-    "@nestjs/platform-express": "^9.4.0",
-    "@nestjs/testing": "^9.4.3",
+    "@apollo/server": "^4.12.2",
+    "@apollo/subgraph": "^2.11.2",
+    "@nestjs/apollo": "^12.2.2",
+    "@nestjs/common": "^10.4.20",
+    "@nestjs/config": "^3.3.0",
+    "@nestjs/core": "^10.4.20",
+    "@nestjs/graphql": "^12.2.2",
+    "@nestjs/testing": "^10.4.20",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
@@ -49,21 +48,19 @@
     "@types/jest": "^30.0.0",
     "@types/supertest": "^6.0.3",
     "conventional-changelog-conventionalcommits": "^9.1.0",
-    "dotenv": "^16.0.3",
-    "graphql": "^16.6.0",
+    "graphql": "^16.11.0",
     "jest": "^30.1.3",
     "prettier": "^3.6.2",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1",
+    "rxjs": "^7.8.2",
     "semantic-release": "^24.2.9",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.4",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.9.2",
     "volbrene-git-hooks": "^1.9.2"
   },
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^1.12.2"
   }
 }
