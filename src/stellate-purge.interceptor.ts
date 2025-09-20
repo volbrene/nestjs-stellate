@@ -27,12 +27,20 @@ export class StellatePurgeInterceptor implements NestInterceptor {
           idReference: string | number;
         }>('stellate-purge-type', context.getHandler());
 
+        if (this.options.debug) {
+          this.logger.debug(`Interceptor triggered for handler: ${context.getHandler().name}`);
+        }
+
         if (stellateQueries) {
+          this.logger.debug(`Queries from metadata: ${JSON.stringify(stellateQueries)}`);
+
           await this.purgeQueries(stellateQueries);
         }
 
         if (stellateType?.type) {
-          await this.purgeType(stellateType?.type, stellateType?.idReference, data);
+          this.logger.debug(`Type from metadata: ${JSON.stringify(stellateType)}`);
+
+          await this.purgeType(stellateType.type, stellateType.idReference, data);
         }
 
         return data;
@@ -45,6 +53,10 @@ export class StellatePurgeInterceptor implements NestInterceptor {
    */
   async purgeQueries(queries: string[]): Promise<boolean> {
     const query = `mutation { _purgeQuery(queries: [${queries.join(',')}]) }`;
+
+    if (this.options.debug) {
+      this.logger.debug(`Generated purge query mutation: ${query}`);
+    }
 
     const successful = await this.sendPurgeRequest(query);
 
@@ -75,8 +87,12 @@ export class StellatePurgeInterceptor implements NestInterceptor {
     const purgeMutationName = `purge${type.charAt(0).toUpperCase()}${type.slice(1)}`;
 
     const query = `mutation {
-    ${purgeMutationName}${id ? `(id: ["${id}"])` : ''}
-  }`;
+      ${purgeMutationName}${id ? `(id: ["${id}"])` : ''}
+    }`;
+
+    if (this.options.debug) {
+      this.logger.debug(`Generated purge type mutation: ${query}`);
+    }
 
     const successful = await this.sendPurgeRequest(query);
 
@@ -99,6 +115,14 @@ export class StellatePurgeInterceptor implements NestInterceptor {
     }
 
     try {
+      if (this.options.debug) {
+        this.logger.debug(
+          `Sending request to Stellate: https://admin.stellate.io/${this.options.serviceName}`
+        );
+
+        this.logger.debug(`Request payload: ${query}`);
+      }
+
       const { data } = await axios.post(
         `https://admin.stellate.io/${this.options.serviceName}`,
         { query },
@@ -109,6 +133,10 @@ export class StellatePurgeInterceptor implements NestInterceptor {
           },
         }
       );
+
+      if (this.options.debug) {
+        this.logger.debug(`Response from Stellate: ${JSON.stringify(data)}`);
+      }
 
       if (data?.errors) {
         this.logger.error(`Stellate Purge Api Error: ${JSON.stringify(data.errors)}`);

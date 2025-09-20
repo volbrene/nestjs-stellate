@@ -1,4 +1,3 @@
-// test/stellate-purge-type.e2e-spec.ts
 import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { GraphQLModule, Query, Resolver, Args, ObjectType, Field } from '@nestjs/graphql';
