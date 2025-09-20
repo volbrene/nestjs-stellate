@@ -124,8 +124,8 @@ export class StellatePurgeInterceptor implements NestInterceptor {
       }
 
       const { data } = await axios.post(
-        `https://admin.stellate.io/${this.options.serviceName}`,
-        { query },
+        `https://admin.stellate.co/${this.options.serviceName}`,
+        query,
         {
           headers: {
             'Content-Type': 'application/json',
