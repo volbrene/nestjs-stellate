@@ -32,13 +32,17 @@ export class StellatePurgeInterceptor implements NestInterceptor {
         }
 
         if (stellateQueries) {
-          this.logger.debug(`Queries from metadata: ${JSON.stringify(stellateQueries)}`);
+          if (this.options.debug) {
+            this.logger.debug(`Queries from metadata: ${JSON.stringify(stellateQueries)}`);
+          }
 
           await this.purgeQueries(stellateQueries);
         }
 
         if (stellateType?.type) {
-          this.logger.debug(`Type from metadata: ${JSON.stringify(stellateType)}`);
+          if (this.options.debug) {
+            this.logger.debug(`Type from metadata: ${JSON.stringify(stellateType)}`);
+          }
 
           await this.purgeType(stellateType.type, stellateType.idReference, data);
         }
@@ -60,7 +64,7 @@ export class StellatePurgeInterceptor implements NestInterceptor {
 
     const successful = await this.sendPurgeRequest(query);
 
-    if (successful) {
+    if (successful && this.options.debug) {
       this.logger.log(`Cache was successfully cleared for the queries: ${queries.join(',')}`);
     }
 
@@ -96,7 +100,7 @@ export class StellatePurgeInterceptor implements NestInterceptor {
 
     const successful = await this.sendPurgeRequest(query);
 
-    if (successful) {
+    if (successful && this.options.debug) {
       this.logger.log(
         `Cache was successfully cleared for the type: ${type}${id ? ` | ID: ${id}` : ''}`
       );
