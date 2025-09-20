@@ -21,6 +21,6 @@ module.exports = {
         ]
       : []),
 
-    '@semantic-release/github',
+    // '@semantic-release/github',
   ],
 };
