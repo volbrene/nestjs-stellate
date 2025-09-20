@@ -1,19 +1,13 @@
-<p align="center">
-  <a href="https://nestjs.com/" target="blank"><img src="https://kamilmysliwiec.com/public/nest-logo.png#1"  height="150" alt="Nest Logo" />   </a>
-  <a href="https://stellate.co" target="_blank"><img src="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/soeczselxya3vtswcxv5" height="150"></a>
-</p>
+# 🛰️ NestJS Stellate Module
 
-<p align="center">Stellate Module for Nest framework</p>
+[![npm version](https://img.shields.io/npm/v/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
+[![CI](https://github.com/volbrene/githooks/actions/workflows/release.yml/badge.svg)](https://github.com/volbrene/githooks/actions)
+[![npm downloads](https://img.shields.io/npm/dm/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
+[![license](https://img.shields.io/npm/l/nestjs-stellate.svg)](https://www.npmjs.com/package/nestjs-stellate)
 
-<p align="center">
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/v/nestjs-stellate.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/l/nestjs-stellate.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/package/nestjs-stellate"><img src="https://img.shields.io/npm/dm/nestjs-stellate.svg" alt="NPM Downloads" /></a>
-</p>
+> This lightweight module for [NestJS](https://nestjs.com/) handles cache purge operations via the [Stellate API](https://stellate.io/) and lets you trigger query and type purges using simple decorators.
 
-## Description
-
-This's a module for [Nest](https://github.com/nestjs/nest) to handle the purge api from [Stellate](https://stellate.io/).
+---
 
 ## Installation
 
@@ -25,7 +19,9 @@ $ npm i --save nestjs-stellate
 
 ### Using purge Interceptor
 
-> app.resolver.ts
+You can attach the `StellatePurgeInterceptor` locally to a single resolver method or register it once as a global interceptor for the entire application.
+
+#### Local usage – `app.resolver.ts`
 
 ```ts
   @Mutation()
@@ -38,25 +34,19 @@ $ npm i --save nestjs-stellate
   }
 ```
 
-#### Global
-
-If you want to set up interceptor as global, you have to follow Nest
-instructions [here](https://docs.nestjs.com/interceptors). Something like
-this.
-
-> app.module.ts
+#### Global usage – `app.module.ts`
 
 ```ts
-import { APP_INTERCEPTOR } from "@nestjs/core";
-import { StellatePurgeInterceptor } from "nestjs-stellate";
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { StellatePurgeInterceptor } from 'nestjs-stellate';
 
 @Module({
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useValue: new StellatePurgeInterceptor({
-        serviceName: "<service-name>",
-        purgeToken: "<token>",
+        serviceName: '<service-name>',
+        purgeToken: '<token>',
       }),
     },
   ],
@@ -64,34 +54,46 @@ import { StellatePurgeInterceptor } from "nestjs-stellate";
 export class ApplicationModule {}
 ```
 
-### Use purge query decorator
+> **💡 Tip:**  
+> Use the global interceptor if you want cache purging to work across all resolvers and controllers  
+> without adding `@UseInterceptors(...)` to each method manually.
 
-To purge some queries you can now use the `StellatePurgeQuery` decorator.
+## Available Decorators
 
-> app.resolver.ts
+### `StellatePurgeQuery`
+
+Use the `StellatePurgeQuery` decorator on a resolver method (typically a mutation) to clear the cache for one or more GraphQL queries after the mutation runs.
+
+Pass an array of query names exactly as they appear in your client operations.
+
+> **Example – app.resolver.ts**
 
 ```ts
-import { StellatePurgeQuery } from "nestjs-stellate"
+import { StellatePurgeQuery } from 'nestjs-stellate';
 
-@Mutation()
-@StellatePurgeQuery(["<query-name>"])
+@Mutation(() => Post)
+@StellatePurgeQuery(['allPosts', 'feed'])
 async upvotePost(@Args('postId') postId: number) {
-  ...
+  // Perform your update
+  return this.postService.upvote(postId);
 }
 ```
 
-### Use purge type decorator
+### `StellatePurgeType`
 
-To purge some type you can now use the `StellatePurgeType` decorator.
+Use the `StellatePurgeType` decorator on a resolver method (usually a mutation) to clear the cache for a specific type.
 
-> app.resolver.ts
+The second argument (`<type-id-reference>`) should be the name of a field in the resolver's return object that contains the entity ID.
+
+> **Example – app.resolver.ts**
 
 ```ts
-import { StellatePurgeType } from "nestjs-stellate"
+import { StellatePurgeType } from 'nestjs-stellate';
 
-@Mutation()
-@StellatePurgeType("<type-name>", "<type-id-reference>")
+@Mutation(() => Post)
+@StellatePurgeType('post', 'id')
 async upvotePost(@Args('postId') postId: number) {
-  ...
+  // return object must include an "id" field
+  return this.postService.upvote(postId);
 }
 ```
