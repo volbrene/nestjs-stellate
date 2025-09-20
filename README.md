@@ -26,8 +26,9 @@ You can attach the `StellatePurgeInterceptor` locally to a single resolver metho
 ```ts
   @Mutation()
   @UseInterceptors(new StellatePurgeInterceptor({
-        serviceName: "<service-name>",
-        purgeToken: "<token>",
+      serviceName: '<service-name>', // your Stellate service name
+      purgeToken: '<token>',         // API token for Stellate admin API
+      debug: false,                  // enable verbose debug logging (optional)
   }))
   async upvotePost(@Args('postId') postId: number) {
     ...
@@ -45,8 +46,9 @@ import { StellatePurgeInterceptor } from 'nestjs-stellate';
     {
       provide: APP_INTERCEPTOR,
       useValue: new StellatePurgeInterceptor({
-        serviceName: '<service-name>',
-        purgeToken: '<token>',
+        serviceName: '<service-name>', // your Stellate service name
+        purgeToken: '<token>', // API token for Stellate admin API
+        debug: false, // enable verbose debug logging (optional)
       }),
     },
   ],
