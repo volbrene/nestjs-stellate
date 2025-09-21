@@ -1,3 +1,9 @@
+## [10.2.0](https://github.com/volbrene/nestjs-stellate/compare/v10.1.0...v10.2.0) (2025-09-21)
+
+### Features
+
+* Addition of the Stellate module for easier use ([132b03a](https://github.com/volbrene/nestjs-stellate/commit/132b03a53be5c11448aec721de3be19239e2085d))
+
 ## [10.1.0](https://github.com/volbrene/nestjs-stellate/compare/v10.0.0...v10.1.0) (2025-09-20)
 
 ### Features

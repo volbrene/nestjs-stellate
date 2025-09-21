@@ -1,6 +1,6 @@
 {
   "name": "nestjs-stellate",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "Stellate.co Module for Nest Framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
