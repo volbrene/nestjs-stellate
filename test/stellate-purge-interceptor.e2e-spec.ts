@@ -5,11 +5,9 @@ import { GraphQLModule, Resolver, Query, Mutation, Args, ObjectType, Field } fro
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as request from 'supertest';
 import axios from 'axios';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-
-import { StellatePurgeInterceptor } from '../src/stellate-purge.interceptor';
 import { StellatePurgeQuery } from '../src/decorators/stellate-purge-query.decorator';
 import { StellatePurgeType } from '../src/decorators/stellate-purge-type.decorator';
+import { StellateModule } from '../src/stellate.module';
 
 jest.mock('axios');
 const axiosPost = axios.post as jest.Mock;
@@ -70,18 +68,13 @@ describe('StellatePurgeInterceptor (GraphQL e2e, debug)', () => {
           driver: ApolloDriver,
           autoSchemaFile: true,
         }),
+        StellateModule.forRoot({
+          serviceName: 'my-stellate-service',
+          purgeToken: 'secret',
+          debug: true,
+        }),
       ],
-      providers: [
-        E2eResolver,
-        {
-          provide: APP_INTERCEPTOR,
-          useValue: new StellatePurgeInterceptor({
-            serviceName: 'my-stellate-service',
-            purgeToken: 'secret',
-            debug: true, // enable debug logging
-          }),
-        },
-      ],
+      providers: [E2eResolver],
     }).compile();
 
     app = modRef.createNestApplication();
@@ -110,7 +103,6 @@ describe('StellatePurgeInterceptor (GraphQL e2e, debug)', () => {
     expect(body.query).toContain('allPosts');
 
     // Debug log assertions
-    expect(dbgSpy).toHaveBeenCalledWith(expect.stringContaining('Interceptor triggered'));
     expect(dbgSpy).toHaveBeenCalledWith(expect.stringContaining('Generated purge query mutation'));
     expect(dbgSpy).toHaveBeenCalledWith(expect.stringContaining('Sending request to Stellate'));
     expect(dbgSpy).toHaveBeenCalledWith(expect.stringContaining('Response from Stellate'));

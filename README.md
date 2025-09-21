@@ -17,48 +17,26 @@ $ npm i --save nestjs-stellate
 
 ## Quick Start
 
-### Using purge Interceptor
+### Install
 
-You can attach the `StellatePurgeInterceptor` locally to a single resolver method or register it once as a global interceptor for the entire application.
-
-#### Local usage – `app.resolver.ts`
+Add the `StellateModule` to your `AppModule` to configure the service once and make the purge interceptor available globally.
 
 ```ts
-  @Mutation()
-  @UseInterceptors(new StellatePurgeInterceptor({
-      serviceName: '<service-name>', // your Stellate service name
-      purgeToken: '<token>',         // API token for Stellate admin API
-      debug: false,                  // enable verbose debug logging (optional)
-  }))
-  async upvotePost(@Args('postId') postId: number) {
-    ...
-  }
-```
-
-#### Global usage – `app.module.ts`
-
-```ts
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { StellatePurgeInterceptor } from 'nestjs-stellate';
+// app.module.ts
+import { Module } from '@nestjs/common';
+import { StellateModule } from 'nestjs-stellate';
 
 @Module({
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useValue: new StellatePurgeInterceptor({
-        serviceName: '<service-name>', // your Stellate service name
-        purgeToken: '<token>', // API token for Stellate admin API
-        debug: false, // enable verbose debug logging (optional)
-      }),
-    },
+  imports: [
+    StellateModule.forRoot({
+      serviceName: '<service-name>', // your Stellate service name
+      purgeToken: '<token>', // API token for Stellate admin API
+      debug: false, // enable verbose debug logging (optional)
+    }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
-
-> **💡 Tip:**  
-> Use the global interceptor if you want cache purging to work across all resolvers and controllers  
-> without adding `@UseInterceptors(...)` to each method manually.
 
 ## Available Decorators
 

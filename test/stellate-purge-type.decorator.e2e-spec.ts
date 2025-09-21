@@ -4,10 +4,8 @@ import { GraphQLModule, Query, Resolver, Args, ObjectType, Field } from '@nestjs
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import * as request from 'supertest';
 import axios from 'axios';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-
-import { StellatePurgeInterceptor } from '../src/stellate-purge.interceptor';
 import { StellatePurgeType } from '../src/decorators/stellate-purge-type.decorator';
+import { StellateModule } from '../src/stellate.module';
 
 jest.mock('axios');
 const axiosPost = axios.post as jest.Mock;
@@ -64,17 +62,12 @@ describe('StellatePurgeType (e2e, object payloads)', () => {
           driver: ApolloDriver,
           autoSchemaFile: true,
         }),
+        StellateModule.forRoot({
+          serviceName: 'my-stellate-service',
+          purgeToken: 'secret',
+        }),
       ],
-      providers: [
-        StellatePurgeTypeResolver,
-        {
-          provide: APP_INTERCEPTOR,
-          useValue: new StellatePurgeInterceptor({
-            serviceName: 'my-stellate-service',
-            purgeToken: 'secret',
-          }),
-        },
-      ],
+      providers: [StellatePurgeTypeResolver],
     }).compile();
 
     app = moduleRef.createNestApplication();
