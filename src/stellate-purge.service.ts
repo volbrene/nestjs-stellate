@@ -10,7 +10,8 @@ export class StellatePurgeService implements OnModuleInit {
   constructor(@Inject(STELLATE_OPTIONS) private readonly options: StellateModuleOptions) {}
 
   /**
-   * Wird automatisch von NestJS beim Modul-Init aufgerufen.
+   *
+   * @returns
    */
   onModuleInit() {
     const missing: string[] = [];
@@ -25,7 +26,6 @@ export class StellatePurgeService implements OnModuleInit {
     }
   }
 
-  /** Public getter für andere Klassen (z. B. Interceptor) */
   get isEnabled(): boolean {
     return this.enabled;
   }
